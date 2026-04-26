@@ -1,641 +1,499 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8" />
-    <title>Pilih Kode Kain</title>
+  <meta charset="UTF-8" />
+  <title>Kode Kain Selector</title>
+  <script src="https://live.zwidgets.com/js-sdk/1.2/ZohoEmbededAppSDK.min.js"></script>
 
-    <script src="https://live.zwidgets.com/js-sdk/1.2/ZohoEmbededAppSDK.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #182230;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --primary: #2563eb;
+      --primary-soft: #eaf2ff;
+      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      --shadow-hover: 0 14px 34px rgba(37, 99, 235, 0.14);
+      --radius-xl: 18px;
+      --radius-lg: 14px;
+    }
 
-        body {
-            margin: 0;
-            padding: 16px;
-            font-family: Arial, sans-serif;
-            background: #f7f9fb;
-            color: #222;
-        }
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Inter, Arial, sans-serif;
+      background: linear-gradient(180deg, #f7faff 0%, #f4f7fb 100%);
+      color: var(--text);
+    }
 
-        .container {
-            background: #ffffff;
-            border-radius: 10px;
-            padding: 16px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-        }
+    .container {
+      max-width: 100%;
+    }
 
-        .header {
-            margin-bottom: 14px;
-        }
+    .header {
+      margin-bottom: 18px;
+      padding: 4px 2px;
+    }
 
-        .title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
+    .title {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 800;
+      color: #0f172a;
+    }
 
-        .subtitle {
-            font-size: 13px;
-            color: #555;
-            line-height: 1.5;
-        }
+    .subtitle {
+      margin: 7px 0 0 0;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
 
-        .meta {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin: 12px 0;
-        }
+    .meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 14px 0;
+    }
 
-        .meta-item {
-            background: #eef3f8;
-            border-radius: 6px;
-            padding: 6px 10px;
-            font-size: 12px;
-            color: #333;
-        }
+    .meta-item {
+      background: #eef3f8;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+      color: #334155;
+      font-weight: 600;
+    }
 
-        .search-box {
-            margin: 12px 0;
-        }
+    .search-box {
+      margin-bottom: 16px;
+    }
 
-        .search-box input {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #ccd6e0;
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-        }
+    .search-box input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #ccd6e0;
+      border-radius: 12px;
+      font-size: 14px;
+      outline: none;
+    }
 
-        .search-box input:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
-        }
+    .search-box input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+    }
 
-        .table-wrapper {
-            max-height: 320px;
-            overflow: auto;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            background: #fff;
-        }
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
+    .card {
+      position: relative;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 18px;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
 
-        thead {
-            background: #f1f5f9;
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 5px;
+      background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+      border-radius: 0 10px 10px 0;
+    }
 
-        th {
-            text-align: left;
-            padding: 10px;
-            border-bottom: 1px solid #dbe3ea;
-            font-weight: 700;
-            color: #334155;
-            white-space: nowrap;
-        }
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: #bfdbfe;
+      box-shadow: var(--shadow-hover);
+    }
 
-        td {
-            padding: 10px;
-            border-bottom: 1px solid #edf2f7;
-            vertical-align: top;
-        }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-left: 8px;
+    }
 
-        tbody tr {
-            cursor: pointer;
-        }
+    .kain-wrap {
+      min-width: 0;
+    }
 
-        tbody tr:hover {
-            background: #f8fafc;
-        }
+    .kain-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
 
-        tbody tr.selected {
-            background: #dbeafe !important;
-            outline: 2px solid #2563eb;
-            outline-offset: -2px;
-        }
+    .kain-code {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.35;
+      word-break: break-word;
+      letter-spacing: -0.01em;
+    }
 
-        .kode-kain {
-            font-weight: 700;
-            color: #1d4ed8;
-        }
+    .unit-badge {
+      flex-shrink: 0;
+      max-width: 42%;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      border: 1px solid #cfe0ff;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-        .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 999px;
-            background: #e0f2fe;
-            color: #0369a1;
-            font-size: 12px;
-            font-weight: 600;
-        }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding-left: 8px;
+    }
 
-        .empty-state {
-            text-align: center;
-            padding: 28px;
-            color: #64748b;
-            font-size: 14px;
-        }
+    .info-box {
+      background: #f8fafc;
+      border: 1px solid #edf2f7;
+      border-radius: var(--radius-lg);
+      padding: 12px 14px;
+      min-height: 70px;
+    }
 
-        .selected-info {
-            margin-top: 10px;
-            padding: 8px 10px;
-            border-radius: 8px;
-            background: #eff6ff;
-            color: #1e3a8a;
-            font-size: 13px;
-            display: none;
-        }
+    .info-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
 
-        .footer {
-            margin-top: 14px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
+    .info-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #eef4ff;
+      color: #2563eb;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
 
-        button {
-            border: none;
-            border-radius: 8px;
-            padding: 10px 14px;
-            font-size: 14px;
-            cursor: pointer;
-        }
+    .info-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111827;
+      line-height: 1.45;
+      word-break: break-word;
+    }
 
-        .btn-cancel {
-            background: #e5e7eb;
-            color: #111827;
-        }
+    .footer-hint {
+      margin-top: 12px;
+      padding-left: 8px;
+      font-size: 12px;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        .btn-cancel:hover {
-            background: #d1d5db;
-        }
+    .footer-hint .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.10);
+    }
 
-        .btn-select {
-            background: #2563eb;
-            color: #ffffff;
-        }
+    .empty {
+      padding: 24px;
+      text-align: center;
+      background: #fff;
+      border: 1px dashed #cbd5e1;
+      border-radius: var(--radius-xl);
+      color: var(--muted);
+      font-size: 14px;
+      box-shadow: var(--shadow);
+    }
 
-        .btn-select:hover {
-            background: #1d4ed8;
-        }
+    @media (max-width: 640px) {
+      body {
+        padding: 14px;
+      }
 
-        .btn-select:disabled {
-            background: #94a3b8;
-            cursor: not-allowed;
-        }
-    </style>
+      .card {
+        padding: 15px;
+      }
+
+      .card-top {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .unit-badge {
+        max-width: 100%;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .kain-code {
+        font-size: 16px;
+      }
+    }
+  </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="title">Pilih Kode Kain</div>
-            <div class="subtitle">
-                Ditemukan lebih dari satu Kode Kain dari detail BOM. Pilih salah satu Kode Kain yang akan digunakan untuk mengisi subform.
-            </div>
+  <div class="container">
+    <div class="header">
+      <h2 class="title">Pilih Kode Kain</h2>
+      <p class="subtitle">
+        Pilih salah satu Kode Kain yang paling sesuai dari detail BOM untuk mengisi subform Quote.
+      </p>
 
-            <div class="meta">
-                <div class="meta-item">
-                    BOM: <strong id="bomCodeText">-</strong>
-                </div>
-                <div class="meta-item">
-                    Code Period: <strong id="codePeriodText">-</strong>
-                </div>
-                <div class="meta-item">
-                    Total Kode Kain: <strong id="totalText">0</strong>
-                </div>
-            </div>
-        </div>
-
-        <div class="search-box">
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="Cari Kode Kain / Nama Barang / Satuan..."
-            />
-        </div>
-
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 40px;">#</th>
-                        <th>Kode Kain</th>
-                        <th>Nama / Item Name</th>
-                        <th>Satuan</th>
-                        <th>MUF / Jumlah</th>
-                        <th>COGS</th>
-                    </tr>
-                </thead>
-                <tbody id="candidateBody">
-                    <tr>
-                        <td colspan="6" class="empty-state">Memuat data...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div id="selectedInfo" class="selected-info"></div>
-
-        <div class="footer">
-            <button class="btn-cancel" type="button" id="cancelButton">Batal</button>
-            <button class="btn-select" type="button" id="selectButton" disabled>
-                Pilih Kode Kain
-            </button>
-        </div>
+      <div class="meta">
+        <div class="meta-item">BOM: <span id="bomCodeText">-</span></div>
+        <div class="meta-item">Code Period: <span id="codePeriodText">-</span></div>
+        <div class="meta-item">Total Kode Kain: <span id="totalText">0</span></div>
+      </div>
     </div>
 
-    <script>
-        var widgetData = {};
-        var candidates = [];
-        var filteredCandidates = [];
-        var selectedCandidate = null;
-        var selectedKey = "";
-
-        function safeText(value) {
-            if (value === null || value === undefined || value === "") {
-                return "-";
-            }
-            return String(value);
-        }
-
-        function normalize(value) {
-            if (value === null || value === undefined) {
-                return "";
-            }
-            return String(value).toLowerCase().trim();
-        }
-
-        function formatNumber(value) {
-            if (value === null || value === undefined || value === "") {
-                return "-";
-            }
-
-            var num = Number(value);
-
-            if (isNaN(num)) {
-                return String(value);
-            }
-
-            return num.toLocaleString("id-ID");
-        }
-
-        function getCandidateName(item) {
-            if (!item) return "";
-
-            return (
-                item.item_name ||
-                item.nama_barang ||
-                item.product_name ||
-                item.name ||
-                ""
-            );
-        }
-
-        function getCandidateKey(item, index) {
-            if (!item) return "idx-" + index;
-
-            return [
-                item.kode_kain || "",
-                item.muf !== undefined ? item.muf : "",
-                item.cogs !== undefined ? item.cogs : "",
-                index
-            ].join("|");
-        }
-
-        function renderTable(data) {
-            console.log("Render Kode Kain table:", data);
-
-            var tbody = document.getElementById("candidateBody");
-            var selectButton = document.getElementById("selectButton");
-
-            tbody.innerHTML = "";
-
-            if (!data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Tidak ada Kode Kain yang cocok.</td></tr>';
-                selectedCandidate = null;
-                selectedKey = "";
-                selectButton.disabled = true;
-                updateSelectedInfo();
-                return;
-            }
-
-            data.forEach(function(item, index) {
-                var tr = document.createElement("tr");
-                var candidateKey = getCandidateKey(item, index);
-
-                tr.setAttribute("data-index", index);
-                tr.setAttribute("data-key", candidateKey);
-
-                if (selectedKey && candidateKey === selectedKey) {
-                    tr.classList.add("selected");
-                }
-
-                var kodeKain = safeText(item.kode_kain);
-                var itemName = safeText(getCandidateName(item));
-                var satuan = safeText(item.satuan);
-                var muf = formatNumber(item.muf);
-                var cogs = formatNumber(item.cogs);
-
-                tr.innerHTML =
-                    '<td>' + (index + 1) + '</td>' +
-                    '<td><span class="kode-kain">' + kodeKain + '</span></td>' +
-                    '<td>' + itemName + '</td>' +
-                    '<td><span class="badge">' + satuan + '</span></td>' +
-                    '<td>' + muf + '</td>' +
-                    '<td>' + cogs + '</td>';
-
-                tr.addEventListener("click", function() {
-                    selectRow(index);
-                });
-
-                tr.addEventListener("dblclick", function() {
-                    selectRow(index);
-                    submitSelection();
-                });
-
-                tbody.appendChild(tr);
-            });
-
-            updateSelectedInfo();
-        }
-
-        function selectRow(index) {
-            console.log("Kode Kain row clicked index:", index);
-
-            selectedCandidate = filteredCandidates[index] || null;
-            selectedKey = getCandidateKey(selectedCandidate, index);
-
-            console.log("Selected Kode Kain candidate:", selectedCandidate);
-            console.log("Selected Kode Kain key:", selectedKey);
-
-            var rows = document.querySelectorAll("#candidateBody tr");
-
-            rows.forEach(function(row) {
-                row.classList.remove("selected");
-            });
-
-            var selectedRow = document.querySelector('#candidateBody tr[data-index="' + index + '"]');
-
-            if (selectedRow) {
-                selectedRow.classList.add("selected");
-            }
-
-            document.getElementById("selectButton").disabled = !selectedCandidate;
-            updateSelectedInfo();
-        }
-
-        function updateSelectedInfo() {
-            var selectedInfo = document.getElementById("selectedInfo");
-
-            if (!selectedCandidate) {
-                selectedInfo.style.display = "none";
-                selectedInfo.innerText = "";
-                return;
-            }
-
-            selectedInfo.style.display = "block";
-            selectedInfo.innerText =
-                "Dipilih: " +
-                safeText(selectedCandidate.kode_kain) +
-                " | MUF: " +
-                safeText(selectedCandidate.muf) +
-                " | COGS: " +
-                safeText(selectedCandidate.cogs);
-        }
-
-        function filterCandidates(keyword) {
-            var q = normalize(keyword);
-
-            console.log("Filter Kode Kain keyword:", q);
-
-            if (!q) {
-                filteredCandidates = candidates.slice();
-                renderTable(filteredCandidates);
-                return;
-            }
-
-            filteredCandidates = candidates.filter(function(item) {
-                var kodeKain = normalize(item.kode_kain);
-                var itemName = normalize(getCandidateName(item));
-                var satuan = normalize(item.satuan);
-                var muf = normalize(item.muf);
-                var cogs = normalize(item.cogs);
-
-                return (
-                    kodeKain.indexOf(q) !== -1 ||
-                    itemName.indexOf(q) !== -1 ||
-                    satuan.indexOf(q) !== -1 ||
-                    muf.indexOf(q) !== -1 ||
-                    cogs.indexOf(q) !== -1
-                );
-            });
-
-            selectedCandidate = null;
-            selectedKey = "";
-            document.getElementById("selectButton").disabled = true;
-
-            renderTable(filteredCandidates);
-        }
-
-        function buildResultPayload() {
-            return {
-                selectedKain: {
-                    kode_kain: selectedCandidate.kode_kain || "",
-                    muf: selectedCandidate.muf !== undefined ? selectedCandidate.muf : null,
-                    cogs: selectedCandidate.cogs !== undefined ? selectedCandidate.cogs : null,
-                    item_name: selectedCandidate.item_name || "",
-                    nama_barang: selectedCandidate.nama_barang || "",
-                    satuan: selectedCandidate.satuan || ""
-                },
-                rowIndex: widgetData.rowIndex,
-                codePeriod: widgetData.codePeriod || "",
-                bomCode: widgetData.bomCode || ""
-            };
-        }
-
-        function tryCloseDirect(payload) {
-            try {
-                console.log("Trying: ZOHO.CRM.UI.Popup.close(payload)");
-                ZOHO.CRM.UI.Popup.close(payload);
-                return true;
-            } catch (e) {
-                console.log("Failed: ZOHO.CRM.UI.Popup.close(payload)", e);
-                return false;
-            }
-        }
-
-        function tryCloseWrapped(payload) {
-            try {
-                console.log("Trying: ZOHO.CRM.UI.Popup.close({ data: payload })");
-                ZOHO.CRM.UI.Popup.close({
-                    data: payload
-                });
-                return true;
-            } catch (e) {
-                console.log("Failed: ZOHO.CRM.UI.Popup.close({ data: payload })", e);
-                return false;
-            }
-        }
-
-        function tryCloseReloadDirect(payload) {
-            try {
-                console.log("Trying: ZOHO.CRM.UI.Popup.closeReload(payload)");
-                ZOHO.CRM.UI.Popup.closeReload(payload);
-                return true;
-            } catch (e) {
-                console.log("Failed: ZOHO.CRM.UI.Popup.closeReload(payload)", e);
-                return false;
-            }
-        }
-
-        function tryCloseReloadWrapped(payload) {
-            try {
-                console.log("Trying: ZOHO.CRM.UI.Popup.closeReload({ data: payload })");
-                ZOHO.CRM.UI.Popup.closeReload({
-                    data: payload
-                });
-                return true;
-            } catch (e) {
-                console.log("Failed: ZOHO.CRM.UI.Popup.closeReload({ data: payload })", e);
-                return false;
-            }
-        }
-
-        function tryCloseWithoutPayload() {
-            try {
-                console.log("Trying: ZOHO.CRM.UI.Popup.close()");
-                ZOHO.CRM.UI.Popup.close();
-                return true;
-            } catch (e) {
-                console.log("Failed: ZOHO.CRM.UI.Popup.close()", e);
-                return false;
-            }
-        }
-
-        function closePopupWithPayload(payload) {
-            console.log("Attempt close popup with payload:", payload);
-
-            if (!window.ZOHO || !ZOHO.CRM || !ZOHO.CRM.UI || !ZOHO.CRM.UI.Popup) {
-                console.log("ZOHO.CRM.UI.Popup is not available");
-                alert("ZOHO Popup API tidak tersedia. Cek environment widget.");
-                return;
-            }
-
-            /*
-                Urutan fallback sengaja diberi jeda.
-                Beberapa environment Zoho tidak langsung close kalau dipanggil beruntun
-                di event click yang sama.
-            */
-
-            var closed = tryCloseDirect(payload);
-
-            setTimeout(function() {
-                tryCloseWrapped(payload);
-            }, 300);
-
-            setTimeout(function() {
-                tryCloseReloadDirect(payload);
-            }, 600);
-
-            setTimeout(function() {
-                tryCloseReloadWrapped(payload);
-            }, 900);
-
-            setTimeout(function() {
-                tryCloseWithoutPayload();
-            }, 1200);
-        }
-
-        function submitSelection() {
-            console.log("submitSelection clicked");
-            console.log("Current selectedCandidate:", selectedCandidate);
-
-            if (!selectedCandidate) {
-                alert("Silakan klik salah satu Kode Kain terlebih dahulu.");
-                return;
-            }
-
-            var result = buildResultPayload();
-
-            console.log("Kode Kain submit payload:", result);
-
-            closePopupWithPayload(result);
-        }
-
-        function cancelSelection() {
-            console.log("cancelSelection clicked");
-
-            var result = {
-                cancelled: true,
-                rowIndex: widgetData.rowIndex,
-                codePeriod: widgetData.codePeriod || "",
-                bomCode: widgetData.bomCode || ""
-            };
-
-            closePopupWithPayload(result);
-        }
-
-        function initWidget(data) {
-            console.log("initWidget raw data:", data);
-
-            widgetData = data || {};
-
-            candidates = widgetData.candidates || [];
-            filteredCandidates = candidates.slice();
-
-            console.log("Resolved widgetData:", widgetData);
-            console.log("Resolved candidates:", candidates);
-
-            document.getElementById("bomCodeText").innerText = safeText(widgetData.bomCode);
-            document.getElementById("codePeriodText").innerText = safeText(widgetData.codePeriod);
-            document.getElementById("totalText").innerText = candidates.length;
-
-            selectedCandidate = null;
-            selectedKey = "";
-            document.getElementById("selectButton").disabled = true;
-
-            renderTable(filteredCandidates);
-        }
-
-        document.getElementById("searchInput").addEventListener("input", function(e) {
-            filterCandidates(e.target.value);
+    <div class="search-box">
+      <input id="searchInput" type="text" placeholder="Cari Kode Kain / Nama Barang / Satuan..." />
+    </div>
+
+    <div id="list" class="list"></div>
+  </div>
+
+  <script>
+    let pageData = {};
+    let originalCandidates = [];
+
+    function safeValue(val) {
+      if (val === null || val === undefined || val === "") return "-";
+      return val;
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function formatNumber(value) {
+      if (value === null || value === undefined || value === "") return "-";
+
+      const num = Number(value);
+
+      if (isNaN(num)) return value;
+
+      return num.toLocaleString("id-ID");
+    }
+
+    function normalize(value) {
+      if (value === null || value === undefined) return "";
+      return String(value).toLowerCase().trim();
+    }
+
+    function getKodeKain(item) {
+      return item.kode_kain || item.item_code || "-";
+    }
+
+    function getItemName(item) {
+      return item.item_name || item.nama_barang || item.product_name || item.name || "-";
+    }
+
+    function getSatuan(item) {
+      return item.satuan || item.unit || "-";
+    }
+
+    function getMuf(item) {
+      return item.muf !== undefined ? item.muf : item.jumlah;
+    }
+
+    function getCogs(item) {
+      return item.cogs;
+    }
+
+    function selectKain(item) {
+      const payload = {
+        selectedKain: {
+          kode_kain: item.kode_kain || item.item_code || "",
+          muf: item.muf !== undefined ? item.muf : (item.jumlah !== undefined ? item.jumlah : null),
+          cogs: item.cogs !== undefined ? item.cogs : null,
+          item_name: item.item_name || "",
+          nama_barang: item.nama_barang || "",
+          satuan: item.satuan || item.unit || ""
+        },
+        rowIndex: pageData.rowIndex ?? null,
+        codePeriod: pageData.codePeriod || "",
+        bomCode: pageData.bomCode || ""
+      };
+
+      console.log("Closing Kode Kain popup with payload:", payload);
+
+      // Ini pattern yang sama dengan widget BOM kamu
+      $Client.close(payload);
+    }
+
+    function renderCandidates(candidates) {
+      const list = document.getElementById("list");
+      list.innerHTML = "";
+
+      if (!candidates || !candidates.length) {
+        list.innerHTML = '<div class="empty">Tidak ada kandidat Kode Kain.</div>';
+        return;
+      }
+
+      candidates.forEach((item) => {
+        const kodeKain = escapeHtml(safeValue(getKodeKain(item)));
+        const itemName = escapeHtml(safeValue(getItemName(item)));
+        const satuan = escapeHtml(safeValue(getSatuan(item)));
+        const muf = escapeHtml(formatNumber(getMuf(item)));
+        const cogs = escapeHtml(formatNumber(getCogs(item)));
+
+        const card = document.createElement("div");
+        card.className = "card";
+
+        card.innerHTML = `
+          <div class="card-top">
+            <div class="kain-wrap">
+              <div class="kain-label">Kode Kain</div>
+              <div class="kain-code">${kodeKain}</div>
+            </div>
+            <div class="unit-badge" title="${satuan}">${satuan}</div>
+          </div>
+
+          <div class="grid">
+            <div class="info-box">
+              <div class="info-label">
+                <span class="info-icon">#</span>
+                Nama / Item Name
+              </div>
+              <div class="info-value">${itemName}</div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">
+                <span class="info-icon">∑</span>
+                MUF / Jumlah
+              </div>
+              <div class="info-value">${muf}</div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">
+                <span class="info-icon">Rp</span>
+                COGS
+              </div>
+              <div class="info-value">${cogs}</div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">
+                <span class="info-icon">✓</span>
+                Status
+              </div>
+              <div class="info-value">Siap dipilih</div>
+            </div>
+          </div>
+
+          <div class="footer-hint">
+            <span class="dot"></span>
+            Klik card untuk memilih Kode Kain ini
+          </div>
+        `;
+
+        card.addEventListener("click", function () {
+          selectKain(item);
         });
 
-        document.getElementById("selectButton").addEventListener("click", function() {
-            submitSelection();
-        });
+        list.appendChild(card);
+      });
+    }
 
-        document.getElementById("cancelButton").addEventListener("click", function() {
-            cancelSelection();
-        });
+    function filterCandidates(keyword) {
+      const q = normalize(keyword);
 
-        ZOHO.embeddedApp.on("PageLoad", function(data) {
-            console.log("Kode Kain Widget PageLoad data:", data);
+      if (!q) {
+        renderCandidates(originalCandidates);
+        return;
+      }
 
-            if (data && data.Entity) {
-                initWidget(data.Entity);
-            } else if (data && data.data) {
-                initWidget(data.data);
-            } else if (data) {
-                initWidget(data);
-            } else {
-                initWidget({});
-            }
-        });
+      const filtered = originalCandidates.filter((item) => {
+        const kodeKain = normalize(getKodeKain(item));
+        const itemName = normalize(getItemName(item));
+        const satuan = normalize(getSatuan(item));
+        const muf = normalize(getMuf(item));
+        const cogs = normalize(getCogs(item));
 
-        ZOHO.embeddedApp.init();
-    </script>
+        return (
+          kodeKain.includes(q) ||
+          itemName.includes(q) ||
+          satuan.includes(q) ||
+          muf.includes(q) ||
+          cogs.includes(q)
+        );
+      });
+
+      renderCandidates(filtered);
+    }
+
+    document.getElementById("searchInput").addEventListener("input", function(e) {
+      filterCandidates(e.target.value);
+    });
+
+    ZOHO.embeddedApp.on("PageLoad", function(data) {
+      console.log("Kode Kain Widget PageLoad data:", data);
+
+      pageData = data || {};
+      originalCandidates = pageData.candidates || [];
+
+      document.getElementById("bomCodeText").innerText = safeValue(pageData.bomCode);
+      document.getElementById("codePeriodText").innerText = safeValue(pageData.codePeriod);
+      document.getElementById("totalText").innerText = originalCandidates.length;
+
+      console.log("Kode Kain candidates:", originalCandidates);
+
+      renderCandidates(originalCandidates);
+    });
+
+    ZOHO.embeddedApp.init();
+  </script>
 </body>
 </html>
