@@ -381,6 +381,7 @@
             console.log("Selected Kode Kain key:", selectedKey);
 
             var rows = document.querySelectorAll("#candidateBody tr");
+
             rows.forEach(function(row) {
                 row.classList.remove("selected");
             });
@@ -464,36 +465,97 @@
             };
         }
 
+        function tryCloseDirect(payload) {
+            try {
+                console.log("Trying: ZOHO.CRM.UI.Popup.close(payload)");
+                ZOHO.CRM.UI.Popup.close(payload);
+                return true;
+            } catch (e) {
+                console.log("Failed: ZOHO.CRM.UI.Popup.close(payload)", e);
+                return false;
+            }
+        }
+
+        function tryCloseWrapped(payload) {
+            try {
+                console.log("Trying: ZOHO.CRM.UI.Popup.close({ data: payload })");
+                ZOHO.CRM.UI.Popup.close({
+                    data: payload
+                });
+                return true;
+            } catch (e) {
+                console.log("Failed: ZOHO.CRM.UI.Popup.close({ data: payload })", e);
+                return false;
+            }
+        }
+
+        function tryCloseReloadDirect(payload) {
+            try {
+                console.log("Trying: ZOHO.CRM.UI.Popup.closeReload(payload)");
+                ZOHO.CRM.UI.Popup.closeReload(payload);
+                return true;
+            } catch (e) {
+                console.log("Failed: ZOHO.CRM.UI.Popup.closeReload(payload)", e);
+                return false;
+            }
+        }
+
+        function tryCloseReloadWrapped(payload) {
+            try {
+                console.log("Trying: ZOHO.CRM.UI.Popup.closeReload({ data: payload })");
+                ZOHO.CRM.UI.Popup.closeReload({
+                    data: payload
+                });
+                return true;
+            } catch (e) {
+                console.log("Failed: ZOHO.CRM.UI.Popup.closeReload({ data: payload })", e);
+                return false;
+            }
+        }
+
+        function tryCloseWithoutPayload() {
+            try {
+                console.log("Trying: ZOHO.CRM.UI.Popup.close()");
+                ZOHO.CRM.UI.Popup.close();
+                return true;
+            } catch (e) {
+                console.log("Failed: ZOHO.CRM.UI.Popup.close()", e);
+                return false;
+            }
+        }
+
         function closePopupWithPayload(payload) {
             console.log("Attempt close popup with payload:", payload);
 
-            try {
-                if (ZOHO && ZOHO.CRM && ZOHO.CRM.UI && ZOHO.CRM.UI.Popup && ZOHO.CRM.UI.Popup.close) {
-                    console.log("Using ZOHO.CRM.UI.Popup.close(payload)");
-                    ZOHO.CRM.UI.Popup.close(payload);
-                    return;
-                }
-            } catch (e1) {
-                console.log("ZOHO.CRM.UI.Popup.close(payload) failed:", e1);
+            if (!window.ZOHO || !ZOHO.CRM || !ZOHO.CRM.UI || !ZOHO.CRM.UI.Popup) {
+                console.log("ZOHO.CRM.UI.Popup is not available");
+                alert("ZOHO Popup API tidak tersedia. Cek environment widget.");
+                return;
             }
 
-            try {
-                if (ZOHO && ZOHO.CRM && ZOHO.CRM.UI && ZOHO.CRM.UI.Popup && ZOHO.CRM.UI.Popup.closeReload) {
-                    console.log("Using ZOHO.CRM.UI.Popup.closeReload(payload)");
-                    ZOHO.CRM.UI.Popup.closeReload(payload);
-                    return;
-                }
-            } catch (e2) {
-                console.log("ZOHO.CRM.UI.Popup.closeReload(payload) failed:", e2);
-            }
+            /*
+                Urutan fallback sengaja diberi jeda.
+                Beberapa environment Zoho tidak langsung close kalau dipanggil beruntun
+                di event click yang sama.
+            */
 
-            try {
-                console.log("Fallback: ZOHO.CRM.UI.Popup.close() without payload");
-                ZOHO.CRM.UI.Popup.close();
-            } catch (e3) {
-                console.log("Fallback close failed:", e3);
-                alert("Gagal menutup popup. Cek console untuk detail error.");
-            }
+            var closed = tryCloseDirect(payload);
+
+            setTimeout(function() {
+                tryCloseWrapped(payload);
+            }, 300);
+
+            setTimeout(function() {
+                tryCloseReloadDirect(payload);
+            }, 600);
+
+            setTimeout(function() {
+                tryCloseReloadWrapped(payload);
+            }, 900);
+
+            setTimeout(function() {
+                tryCloseWithoutPayload();
+            }, 1200);
         }
 
         function submitSelection() {
@@ -515,12 +577,14 @@
         function cancelSelection() {
             console.log("cancelSelection clicked");
 
-            closePopupWithPayload({
+            var result = {
                 cancelled: true,
                 rowIndex: widgetData.rowIndex,
                 codePeriod: widgetData.codePeriod || "",
                 bomCode: widgetData.bomCode || ""
-            });
+            };
+
+            closePopupWithPayload(result);
         }
 
         function initWidget(data) {
